@@ -29,13 +29,13 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 
 ## Dashboard Preview
 
-Check out the interactive dashboard:
+Check out the interactive dashboard:   [Click on the image for video]
 
 [![Dashboard Preview](preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-02-26%20155322.png)](https://youtu.be/6VqIfOs4PuI)
 
 ## Dashboard Repository
 
-To explore the dashboard:
+To explore the dashboard: 
 
 - **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/backend-of-ITD)
 - **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/frontend-of-ITD)
