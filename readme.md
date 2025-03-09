@@ -1,32 +1,48 @@
-<h1>Welcome to Insider Threat Detection World</h1>
-<br>
-<p>Insider threats are among the most challenging cybersecurity risks, where individuals within an
-organization — such as employees, contractors, or partners — intentionally or unintentionally
-compromise sensitive information. These threats can manifest as data leaks through emails,
-unauthorized access to confidential files, or even sabotage of critical systems.
-</p>
+# Welcome to Insider Threat Detection World
 
-<h4>So i have provided a full fledged AI model for detecting Insider based on there system's log, email communications, web browsing and etc.</h4>
-<p>I have Used CERT datset version 4.2 can be found at https://kilthub.cmu.edu/articles/dataset/Insider_Threat_Test_Dataset/12841247/1 .<br>After a lot of preprocessing and 
-features have been extracted and fed to LSTM-Autoencoder and risk scores have been pridicted.<br>In the model Folder you can find trained model.<br>Other folders consists data as they named.<br>
-</p>
-<h3>Check These Performance metrices</h3>
-<ul>
-  <li>Accuracy : 92%<br></li>
-  <li>Confusion Metrix:</li>
-  <img src="./preprocessing and feature extraction/performance metrices/output3.png">
-  <li>ROC-AUC curve: </li>
-  <img src="./output4.png">
-  <li>Reconstruction Error Distribution: </li>
-  <img src="./preprocessing and feature extraction/performance metrices/output2.png">
-  <li>Epoch vs Val loss: </li>
-  <img src="./preprocessing and feature extraction/performance metrices/output.png"> 
-</ul>
+Insider threats are among the most challenging cybersecurity risks, where individuals within an organization—such as employees, contractors, or partners—intentionally or unintentionally compromise sensitive information. These threats can manifest as data leaks through emails, unauthorized access to confidential files, or even sabotage of critical systems.
 
-<h3>Take a look of dashboard</h3>
-<a href="https://youtu.be/6VqIfOs4PuI"><img src="preprocessing and feature extraction/performance metrices/Screenshot 2025-02-26 155322.png"><p>Click for Video</p></a>
+## About the Project
 
-<h3>For the dashboard </h3>
-<p>You can pull the docker image and run them (Visit following docker hub public repo)<br></p>
-<p>https://hub.docker.com/repository/docker/bkeshav218/insider-threat-detection-new<br></p>
+I have provided a full-fledged AI model for detecting insiders based on their system logs, email communications, web browsing, and more.
+
+- The model is trained on the **CERT dataset (version 4.2)**, which can be found at: [CERT Dataset v4.2](https://kilthub.cmu.edu/articles/dataset/Insider_Threat_Test_Dataset/12841247/1)
+- After extensive preprocessing and feature extraction, the data is fed into an **LSTM-Autoencoder**, which predicts risk scores.
+- The **`model`** folder contains the trained model.
+- Other folders contain datasets and related files as named.
+
+## Performance Metrics
+
+### Accuracy: **92%**
+
+### Confusion Matrix:
+![Confusion Matrix](./preprocessing%20and%20feature%20extraction/performance%20metrices/output3.png)
+
+### ROC-AUC Curve:
+![ROC-AUC Curve](./output4.png)
+
+### Reconstruction Error Distribution:
+![Reconstruction Error Distribution](./preprocessing%20and%20feature%20extraction/performance%20metrices/output2.png)
+
+### Epoch vs Validation Loss:
+![Epoch vs Val Loss](./preprocessing%20and%20feature%20extraction/performance%20metrices/output.png)
+
+## Dashboard Preview
+
+Check out the interactive dashboard:
+
+[![Dashboard Preview](preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-02-26%20155322.png)](https://youtu.be/6VqIfOs4PuI)
+
+## Dashboard Repository
+
+To explore the dashboard:
+
+- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/backend-of-ITD)
+- **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/frontend-of-ITD)
+
+You can also visit the **live website** (note: free hosting may cause slow performance):
+
+🔗 [Live Dashboard](https://frontend-of-itd.onrender.com)
+ <p>It will ask for input csv so you can provide it from "sample data" folder</p>
+
 
