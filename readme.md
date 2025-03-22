@@ -11,15 +11,21 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 - The **`model`** folder contains the trained model.
 - Other folders contain datasets and related files as named.
 
+## Check out the interactive dashboard:   ### [Click on the image for video]
+
+[![Dashboard Preview](preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-02-26%20155322.png)](https://youtu.be/6VqIfOs4PuI)
+
 ## Know More about my work
 ### Proposed Solution:-
-   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-10%20195643.png)
+   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20103035.png)
 ### Model Architecture:-
-   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-10%20195650.png)
+   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20103055.png)
 ### Familiar with some features:-
-   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-10%20195656.png)
+   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20103123.png)
+### Know about User's Activity Graph:-
+   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20104203.png)
 ### Know about network of insiders:-
-   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-10%20195702.png)
+   ![Techinical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20104209.png)
 ## Performance Metrics
 
 ### Accuracy: **92%**
@@ -28,7 +34,7 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 ![Confusion Matrix](./preprocessing%20and%20feature%20extraction/performance%20metrices/output3.png)
 
 ### ROC-AUC Curve:
-![ROC-AUC Curve](./output4.png)
+![ROC-AUC Curve](./preprocessing%20and%20feature%20extraction/performance%20metrices/output4.png)
 
 ### Reconstruction Error Distribution:
 ![Reconstruction Error Distribution](./preprocessing%20and%20feature%20extraction/performance%20metrices/output2.png)
