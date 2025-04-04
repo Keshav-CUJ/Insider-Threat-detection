@@ -7,10 +7,10 @@ import pickle
 from transformers import AutoModel, AutoTokenizer
 
 # ✅ File Paths
-csv_path = "anomalous_emails.csv"  # Change if needed
-faiss_index_path = "faiss_index.bin"
-embeddings_path = "email_embeddings.npy"
-email_texts_path = "email_texts.pkl"
+csv_path = r"data\anomalous_emails.csv"  # Change if needed
+faiss_index_path = r"storage\faiss_index.bin"
+embeddings_path = r"storage\email_embeddings.npy"
+email_texts_path = r"storage\email_texts.pkl"
 
 # ✅ Load Email Data
 df = pd.read_csv(csv_path)
@@ -32,65 +32,13 @@ def get_bert_embedding(text):
         embedding = bert_model(**tokenized).last_hidden_state.mean(dim=1).cpu().numpy()  # Mean pooling
     return embedding
 
-# ✅ Compute and Save Embeddings (If Not Already Saved)
-try:
-    email_embeddings = np.load(embeddings_path)
-    with open(email_texts_path, "rb") as f:
-        email_texts = pickle.load(f)
-    print("🔄 Loaded existing email embeddings and texts.")
-
-except FileNotFoundError:
-    print("🚀 Computing embeddings for the first time...")
-    email_embeddings = np.vstack([get_bert_embedding(email) for email in email_texts])
-    
-    # ✅ Save embeddings & texts
-    np.save(embeddings_path, email_embeddings)
-    with open(email_texts_path, "wb") as f:
-        pickle.dump(email_texts, f)
-    print("✅ Saved email embeddings & texts.")
-
-# ✅ Normalize and Store in FAISS
-faiss.normalize_L2(email_embeddings)
-dimension = email_embeddings.shape[1]
-index = faiss.IndexFlatIP(dimension)
-
-# ✅ Load FAISS index (if exists) or create a new one
-try:
-    faiss.read_index(faiss_index_path)
-    print("🔄 Loaded existing FAISS index.")
-except:
-    index.add(email_embeddings)
-    faiss.write_index(index, faiss_index_path)
-    print("✅ Created and saved FAISS index.")
-
-
-
 
 # ✅ Function to Find Similar Emails
 def find_similar_emails(new_email_text, top_k=5):
     """Finds top K similar emails using FAISS and cosine similarity. Handles empty index errors."""
     
-    
-    # ✅ File Paths
-    csv_path = "../data/anomalous_emails.csv"  # Change if needed
-    faiss_index_path = "../storage/faiss_index.bin"
-    embeddings_path = "../storage/email_embeddings.npy"
-    email_texts_path = "../storage/email_texts.pkl"
-    
     if os.path.exists(faiss_index_path):
             os.remove(faiss_index_path)
-    
-    # ✅ Load Email Data
-    df = pd.read_csv(csv_path)
-    email_texts = df["cleaned_content_x"].dropna().tolist()  # Remove NaNs
-
-# ✅ Initialize BERT model and tokenizer
-    MODEL_NAME = "bert-base-uncased"
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    bert_model = AutoModel.from_pretrained(MODEL_NAME).to(device)
-    bert_model.eval()
     
     try:
      email_embeddings = np.load(embeddings_path)

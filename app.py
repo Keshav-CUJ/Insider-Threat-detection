@@ -38,9 +38,11 @@ def handle_csv_upload(data):
         socketio.emit("csv_error", {"error": "CSV must contain user, date, and activity_sequence"})
         return
     
-    user= "keshav"
-    date= "18/11/2003"
-    activity_sequence = [18.0, 29.0, 23.0, 18.0, 29.0, 23.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 3.0, 4.0, 7.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 3.0, 4.0, 8.0, 26.0, 27.0, 26.0, 29.0, 26.0, 27.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 27.0, 26.0, 29.0, 26.0, 27.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 11.0, 14.0, 11.0, 12.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 12.0, 11.0, 12.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 12.0, 11.0, 14.0, 11.0, 12.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 12.0, 11.0, 12.0, 11.0, 12.0, 11.0, 12.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 11.0, 14.0, 26.0, 29.0, 26.0, 27.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 27.0, 26.0, 29.0, 26.0, 27.0, 26.0, 27.0, 26.0, 28.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 26.0, 29.0, 99, 99, 99, 99, 99]
+    user = df.loc[0, "user"]  # Assuming "username" column exists
+    date = pd.to_datetime(df.loc[0, "date"]).strftime("%d/%m/%Y")  # Convert date format
+    
+    # Convert "activity_sequence" column from CSV string to a list
+    activity_sequence = list(map(float, df.loc[0, "activity_encoded"].strip("[]").split(",")))    
     
     process_real_time_scoring(user, date, activity_sequence)
     
@@ -71,31 +73,30 @@ def process_email_data(file_name):
         return
     
     emails_data = []
-    total_emails = 1
-    # for index, email_text in enumerate(df['cleaned_content_x'].dropna()):
-    index=0
-    email_text="bad things angry outraged bad things leave outraged leave take seriously fault bad things two faced bad things angry outraged leave angry outraged bad things angry take seriously exacerbated angry leave leave outraged exacerbated bad things irreplaceable leave outraged take seriously bad things exacerbated exacerbated irreplaceable take seriously two faced outraged outraged two faced fault outraged fault outraged two faced exacerbated irreplaceable take seriously"    
-    socketio.emit('email_processing_update', {'status': f'Processing email {index+1}/{total_emails}...'})
+    total_emails = total_emails = len(df['cleaned_content_x'].dropna())
+    for index, email_text in enumerate(df['cleaned_content_x'].dropna()):
+    
+     socketio.emit('email_processing_update', {'status': f'Processing email {index+1}/{total_emails}...'})
         
-    reconstruction_error = float(analyze_email(email_text))
-    similar_emails_raw = find_similar_emails(email_text)
-    anomalous_words, anomaly_score = get_knowledge_base_score(email_text)
+     reconstruction_error = float(analyze_email(email_text))
+     similar_emails_raw = find_similar_emails(email_text)
+     anomalous_words, anomaly_score = get_knowledge_base_score(email_text)
         
-    highlighted_email = highlight_anomalous_words(email_text, anomalous_words)
+     highlighted_email = highlight_anomalous_words(email_text, anomalous_words)
         
         # Convert to list of dicts with rank
-    similar_emails = [
+     similar_emails = [
             {"rank": i + 1, "similarity_score": float(score), "email": email}
             for i, (email, score) in enumerate(similar_emails_raw)
         ]
         
-    email_result = {
+     email_result = {
             "email_text": highlighted_email,
             "reconstruction_error": reconstruction_error,
             "similar_emails": similar_emails,
             "anomaly_score": float(anomaly_score)
         }
-    emails_data.append(email_result)
+     emails_data.append(email_result)
     
     socketio.emit('email_analysis', json.dumps(emails_data, indent=2))
     socketio.emit('email_processing_update', {'status': 'Processing complete!'})  # Final update

@@ -2,7 +2,7 @@ import json
 import numpy as np
 
 # ✅ Load Knowledge Base from JSON
-with open("anomalous_knowledge_base.json", "r") as f:
+with open(r"storage\anomalous_knowledge_base.json", "r") as f:
     knowledge_base = json.load(f)
 
 def get_knowledge_base_score(email_text):

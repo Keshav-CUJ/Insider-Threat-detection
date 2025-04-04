@@ -14,7 +14,7 @@ from socketio_instance import socketio
 
 
 # Load trained LSTM Autoencoder
-MODEL_PATH = "../models/best_lstm_autoencoder2.h5"
+MODEL_PATH = r"models\best_lstm_autoencoder2.h5"
 model = tf.keras.models.load_model(MODEL_PATH)
 
 # Kafka Configuration

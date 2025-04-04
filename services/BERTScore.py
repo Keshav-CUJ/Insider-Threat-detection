@@ -45,7 +45,7 @@ bert_model = AutoModel.from_pretrained(MODEL_NAME, output_hidden_states=True).to
 # ✅ Load Trained Autoencoder Model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 autoencoder = BertAutoencoderWithAttention().to(device)  # Use your defined model class
-autoencoder.load_state_dict(torch.load("../models/bert_autoencoder_best.pth", map_location=device))
+autoencoder.load_state_dict(torch.load(r"models\bert_autoencoder_best.pth", map_location=device))
 autoencoder.eval()
 
 def get_bert_embeddings(email_text):
