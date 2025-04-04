@@ -20,7 +20,7 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 
 - **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/BackendOFF)
 - **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/BackendOFF)
-
+<hr>
 ### Part 2 : Shows daily basis insider threat detection
 [![Watch the video](https://img.youtube.com/vi/6VqIfOs4PuI/0.jpg)](https://www.youtube.com/watch?v=6VqIfOs4PuI)
 
@@ -31,7 +31,7 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 
 
 
-
+<hr>
 
 ## Know More about my work
 ### Proposed Solution:-
