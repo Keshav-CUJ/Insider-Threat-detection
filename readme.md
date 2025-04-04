@@ -13,7 +13,25 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 
 ## Check out the interactive dashboard:   ### [Click on the image for video]
 
-[![Dashboard Preview](preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-02-26%20155322.png)](https://youtu.be/6VqIfOs4PuI)
+### Part 1 : Shows Real Time insider threat detection
+[![Watch the video](https://img.youtube.com/vi/XHeZeiMYr60/0.jpg)](https://www.youtube.com/watch?v=XHeZeiMYr60)
+
+### To explore the dashboard: 
+
+- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/BackendOFF)
+- **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/BackendOFF)
+
+### Part 2 : Shows daily basis insider threat detection
+[![Watch the video](https://img.youtube.com/vi/6VqIfOs4PuI/0.jpg)](https://www.youtube.com/watch?v=6VqIfOs4PuI)
+
+### To explore the dashboard: 
+
+- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/backend-of-ITD)
+- **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/frontend-of-ITD)
+
+
+
+
 
 ## Know More about my work
 ### Proposed Solution:-
@@ -42,18 +60,8 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 ### Epoch vs Validation Loss:
 ![Epoch vs Val Loss](./preprocessing%20and%20feature%20extraction/performance%20metrices/output.png)
 
-## Dashboard Preview
 
-Check out the interactive dashboard:   [Click on the image for video]
 
-[![Dashboard Preview](preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-02-26%20155322.png)](https://youtu.be/6VqIfOs4PuI)
-
-## Dashboard Repository
-
-To explore the dashboard: 
-
-- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/backend-of-ITD)
-- **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/frontend-of-ITD)
 
 You can also visit the **live website** (note: free hosting may cause slow performance):
 
