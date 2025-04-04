@@ -1,3 +1,12 @@
+body {
+  background-color: skyblue;
+  color: black;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+
 .App {
   text-align: center;
 }
