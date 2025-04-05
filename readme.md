@@ -11,6 +11,10 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 - The **`model`** folder contains the trained model.
 - Other folders contain datasets and related files as named.
 
+
+## Don't Pull this branch as it consist model and training only, for dashboard pull the following branches : 
+
+
 ## Check out the interactive dashboard:   ### [Click on the image for video]
 
 ### Part 1 : Shows Real Time insider threat detection
@@ -18,8 +22,8 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 
 ### To explore the dashboard: 
 
-- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/BackendOFF)
-- **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/BackendOFF)
+- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/RealtimeBackend)
+- **Frontend :** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/Real%2BDailyFrontend))
 
 
 ### Part 2 : Shows daily basis insider threat detection
@@ -27,8 +31,8 @@ I have provided a full-fledged AI model for detecting insiders based on their sy
 
 ### To explore the dashboard: 
 
-- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/backend-of-ITD)
-- **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/frontend-of-ITD)
+- **Backend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/DailyBasisBackend)
+- **Frontend:** [GitHub Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/Real%2BDailyFrontend)
 
 
 ## Know More about my work
