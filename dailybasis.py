@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # Load LSTM Autoencoder Model
-MODEL_PATH = r"daily-basis-backend\model\best_lstm_autoencoder2.h5"
+MODEL_PATH = r"model\best_lstm_autoencoder2.h5"
 model = tf.keras.models.load_model(MODEL_PATH)
 MAX_SEQ_LENGTH = 74  # Ensure consistency with training
 
