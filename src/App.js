@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Landing from './Landing';
 import AnomalyDashboard from './dashboard';
 import Realtime from './realtime';
-import './realtime.css';
+import './dashboard.css';
 
 function App() {
   return (

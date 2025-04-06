@@ -1,70 +1,126 @@
-# Getting Started with Create React App
+# 🚀 Welcome to the Insider Threat Detection Dashboard (Local Setup Guide)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is structured into **three separate branches** to streamline development and deployment:
 
-## Available Scripts
+1. **Frontend**  
+2. **Backend for Real-time Detection**
+3. **Backend for Daily Basis Detection**
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 📦 Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Before getting started, make sure the following tools are installed on your machine:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (Sign in with your account)
+2. **[Visual Studio Code](https://code.visualstudio.com/)** (We'll use this to create a virtual environment)
+3. **[Node.js](https://nodejs.org/en/)** (Version 18+ recommended)
+4. **npm** (Usually comes with Node.js)
+5. **Git** (Version control system)
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠️ Setup Instructions
 
-### `npm run build`
+### Step 1: Project Structure
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Create a folder named `root`.
+2. Open the folder in **VS Code**.
+3. Clone all three repositories into this folder:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+git clone --branch Real+DailyFrontend https://github.com/Keshav-CUJ/Insider-Threat-detection.git frontend
+git clone --branch RealtimeBackend https://github.com/Keshav-CUJ/Insider-Threat-detection.git RealtimeBackend
+git clone --branch DailyBasisBackend https://github.com/Keshav-CUJ/Insider-Threat-detection.git DailyBasisBackend
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### Step 2: Set Up Virtual Environment
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+In the terminal (PowerShell), ensure you’re in the `root` folder and run:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```powershell
+python3.9 -m venv Newvenv
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\Newvenv\Scripts\Activate.ps1
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Step 3: Install Python Dependencies
 
-## Learn More
+Move the `requirements.txt` file from the `frontend` (kept for avoiding embiguity) directory to the root folder. Then, run:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+pip install -r requirements.txt
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+### Step 4: Setup Frontend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+cd frontend
+npm install
+```
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Step 5: Run All Services
 
-### Making a Progressive Web App
+#### Start the **Daily Basis Backend**:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+cd ../DailyBasisBackend
+python app.py
+# Runs on http://localhost:5001
+```
 
-### Advanced Configuration
+> Open a **new terminal** for each of the following steps.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### Start the **Real-time Backend with Kafka**:
 
-### Deployment
+```bash
+cd ../RealtimeBackend
+docker-compose up
+# Kafka logs will start appearing
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+#### Run the **Real-time Backend Flask app**:
 
-### `npm run build` fails to minify
+```bash
+cd RealtimeBackend
+python app.py
+# Runs on http://localhost:5000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+#### Start the **Frontend**:
+
+```bash
+cd ../frontend
+npm start
+```
+
+Once it compiles successfully, it will automatically open the dashboard in your browser at:
+
+```
+http://localhost:3000
+```
+
+If not, manually visit the link.
+
+---
+
+## 📤 Uploading CSV Files
+
+- **Real-time Dashboard**: Upload CSV from `RealtimeBackend/uploads`
+- **Daily Basis Dashboard**: Upload CSV from `RealtimeBackend/uploads` (yes, same directory)
+
+---
+
+## 🎥 Video Tutorial
+
+[![Watch the video](pictures/flat,1000x1000,075,f.u1.jpg)](https://youtu.be/0EE-MvzcNZk)
+
+---

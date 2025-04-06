@@ -19,7 +19,8 @@
     "recharts": "^2.15.2",
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "wouter": "^3.6.0"
   },
   "scripts": {
     "start": "react-scripts start",

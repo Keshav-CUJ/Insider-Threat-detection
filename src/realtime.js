@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import "./realtime.css"; // Ensure CSS is imported
+import { 
+  LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, 
+  Legend, Brush, ReferenceLine
+} from "recharts";
+import "./realtime.css";
 
 const socket = io("http://localhost:5000");
 
@@ -14,10 +17,40 @@ function Realtime() {
   const [highRiskActivities, setHighRiskActivities] = useState({});
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [predictionComplete, setPredictionComplete] = useState(false);
+  const [isPredicting, setIsPredicting] = useState(false);
   const logsEndRef = useRef(null);
   const kafkaLogsEndRef = useRef(null);
+  const scrollableProducerRef = useRef(null);
+  const scrollableKafkaRef = useRef(null);
   const [processingStatus, setProcessingStatus] = useState("");
   const [emailsData, setEmailsData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [chartZoomLevel, setChartZoomLevel] = useState('all');
+  const [chartDomain, setChartDomain] = useState([0, 'auto']);
+  const [newLogIndexes, setNewLogIndexes] = useState({});
+  const [newKafkaLogIndexes, setNewKafkaLogIndexes] = useState({});
+  
+  // Reconstruction error threshold - 95th percentile at 0.3
+  const RECONSTRUCTION_THRESHOLD = 0.3;
+
+  // Function to auto-scroll to bottom
+  const scrollToBottom = (ref) => {
+    if (ref && ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  };
+
+  // Helper to detect if the log contains risk score
+  const getRiskLevel = (log) => {
+    const riskMatch = log.match(/Sent risk: (\d+(\.\d+)?)/);
+    if (riskMatch) {
+      const risk = parseFloat(riskMatch[1]);
+      if (risk > 90) return "risk-high";
+      if (risk > 70) return "risk-medium";
+      return "risk-low";
+    }
+    return "";
+  };
 
   useEffect(() => {
     // Listen for producer logs (Risk Score and Timestamp)
@@ -32,8 +65,30 @@ function Realtime() {
         setRiskScores((prevScores) => [...prevScores, { timestamp, risk_score }]);
       }
 
-      setLogs((prevLogs) => [...prevLogs, message]);
-      scrollToBottom(logsEndRef);
+      setLogs((prevLogs) => {
+        const newLogs = [...prevLogs, message];
+        // Mark the new log index for animation
+        setNewLogIndexes(prev => ({
+          ...prev,
+          [newLogs.length - 1]: true
+        }));
+        
+        // Auto-scroll to bottom after state update
+        setTimeout(() => scrollToBottom(scrollableProducerRef), 50);
+        
+        // Clear the "new" status after animation time
+        setTimeout(() => {
+          setNewLogIndexes(prev => {
+            const updated = {...prev};
+            delete updated[newLogs.length - 1];
+            return updated;
+          });
+        }, 2000);
+        
+        return newLogs;
+      });
+      
+      setIsPredicting(true);
     });
 
     // Listen for Kafka messages (Full Data + Extracted User & Date)
@@ -45,7 +100,29 @@ function Realtime() {
       }
 
       // Store full Kafka message (as JSON)
-      setKafkaLogs((prevLogs) => [...prevLogs, JSON.stringify(data, null, 2)]);
+      setKafkaLogs((prevLogs) => {
+        const newLogs = [...prevLogs, JSON.stringify(data, null, 2)];
+        
+        // Mark the new kafka log for animation
+        setNewKafkaLogIndexes(prev => ({
+          ...prev,
+          [newLogs.length - 1]: true
+        }));
+        
+        // Auto-scroll to bottom after state update
+        setTimeout(() => scrollToBottom(scrollableKafkaRef), 50);
+        
+        // Clear the "new" status after animation time
+        setTimeout(() => {
+          setNewKafkaLogIndexes(prev => {
+            const updated = {...prev};
+            delete updated[newLogs.length - 1];
+            return updated;
+          });
+        }, 2000);
+        
+        return newLogs;
+      });
 
       // Extract high-risk activities
       if (data.activity && data.risk_score > 95) {
@@ -60,10 +137,6 @@ function Realtime() {
           return prev;
         });
       }
-
-      scrollToBottom(kafkaLogsEndRef);
-
-
     });
 
     return () => {
@@ -72,22 +145,35 @@ function Realtime() {
     };
   }, []);
 
-  // ✅ Listen for prediction completion event
+  // Auto-scroll when logs update
+  useEffect(() => {
+    if (isPredicting) {
+      scrollToBottom(scrollableProducerRef);
+    }
+  }, [logs, isPredicting]);
+
+  // Auto-scroll when kafka logs update
+  useEffect(() => {
+    if (isPredicting) {
+      scrollToBottom(scrollableKafkaRef);
+    }
+  }, [kafkaLogs, isPredicting]);
+
+  // Listen for prediction completion event
   useEffect(() => {
     socket.on("prediction_done", () => {
       console.log("Prediction completed. Showing results...");
       setPredictionComplete(true);
+      setIsPredicting(false);
 
       // Emit event to process email data after prediction is done
-    socket.emit("process_email_data");
+      socket.emit("process_email_data");
     });
 
     return () => {
       socket.off("prediction_done");
     };
   }, []);
-
-
 
   useEffect(() => {
     // Listen for real-time email processing updates
@@ -108,155 +194,520 @@ function Realtime() {
     };
   }, []);
 
-  const scrollToBottom = (ref) => {
-    setTimeout(() => {
-      ref.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
-
   const handleFileChange = (e) => {
     setCsvFile(e.target.files[0]);
   };
 
   const handleUpload = () => {
     if (csvFile) {
-      // 🔹 Clear previous logs, Kafka messages, and risk scores
+      // Clear previous data and set loading state
+      setLoading(true);
       setLogs([]);
       setKafkaLogs([]);
       setRiskScores([]);
       setUserData({ user: "", date: "" });
-      setHighRiskActivities({});  // ✅ Reset high-risk categories
-      setPredictionComplete(false); // ✅ Reset prediction state
-      setEmailsData([]); // Clear previous results
+      setHighRiskActivities({});
+      setPredictionComplete(false);
+      setEmailsData([]);
+      setProcessingStatus("");
+      setIsPredicting(true);
+      setNewLogIndexes({});
+      setNewKafkaLogIndexes({});
 
       const reader = new FileReader();
       reader.readAsText(csvFile);
       reader.onload = () => {
         const fileContent = reader.result;
         socket.emit("upload_csv", { fileContent });
+        setLoading(false);
       };
     }
   };
 
+  // Helper to get anomaly score color based on value
+  const getScoreColor = (score) => {
+    if (score > 0.7) return "#fa4549"; // High anomaly - red
+    if (score > 0.5) return "#f97e23"; // Medium anomaly - orange
+    return "#238636"; // Low anomaly - green
+  };
+
+  // Helper to get reconstruction error color based on threshold
+  const getErrorColor = (error) => {
+    if (error > RECONSTRUCTION_THRESHOLD * 1.5) return "#fa4549"; // High error - red
+    if (error > RECONSTRUCTION_THRESHOLD) return "#f97e23"; // Medium error - orange
+    return "#238636"; // Low error - green
+  };
+
+  // Format timestamps for chart
+  const formatTimestamp = (timestamp) => {
+    return timestamp.split(' ')[1]; // Extract only time part
+  };
+
+  // Handle chart zoom level changes
+  const handleZoomChange = (level) => {
+    setChartZoomLevel(level);
+    
+    switch(level) {
+      case 'high':
+        setChartDomain([50, 100]);
+        break;
+      case 'medium':
+        setChartDomain([25, 100]);
+        break;
+      case 'low':
+        setChartDomain([0, 50]);
+        break;
+      default:
+        setChartDomain([0, 'auto']);
+    }
+  };
+
+  // Function to handle brush change (custom zoom)
+  const handleBrushChange = (brushData) => {
+    if (brushData && brushData.startIndex !== undefined && brushData.endIndex !== undefined) {
+      // User is selecting a range with the brush
+      if (brushData.startIndex === brushData.endIndex) {
+        // Reset to full view if brush is too small
+        setChartDomain([0, 'auto']);
+        setChartZoomLevel('all');
+      }
+    }
+  };
+
   return (
-    <div className="App">
-      <h1>Real time anomaly Scoring Dashboard</h1>
-      <h2>User: {userData.user} | Date: {userData.date}</h2>
+    <div className="App1">
+      <h1>Real-time Anomaly Detection Dashboard</h1>
+      
+      {userData.user || userData.date ? (
+        <div className="user-badge">
+          <i className="fas fa-user-shield"></i>
+          <span>User: {userData.user}</span>
+          {userData.date && (
+            <>
+              <i className="fas fa-calendar-alt"></i>
+              <span>Date: {userData.date}</span>
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="user-badge">
+          <i className="fas fa-info-circle"></i>
+          <span>Upload a CSV file to start analysis</span>
+        </div>
+      )}
 
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload CSV</button>
+      <div className="file-upload-container">
+        <div className="file-input-wrapper">
+          <label htmlFor="file-upload" className="file-label">
+            <i className="fas fa-file-csv"></i>
+            Choose CSV File
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            onChange={handleFileChange}
+            accept=".csv"
+            className="file-input"
+          />
+        </div>
+        
+        <button
+          className="upload-btn"
+          onClick={handleUpload}
+          disabled={!csvFile || loading}
+        >
+          {loading ? (
+            <>
+              <i className="fas fa-spinner fa-spin"></i>
+              Uploading...
+            </>
+          ) : (
+            <>
+              <i className="fas fa-cloud-upload-alt"></i>
+              Upload & Analyze
+            </>
+          )}
+        </button>
+        
+        {csvFile && (
+          <div className="selected-file">
+            Selected: {csvFile.name} ({(csvFile.size / 1024).toFixed(2)} KB)
+          </div>
+        )}
+      </div>
 
-      <div className="log-container">
-        <h2>Producer Logs</h2>
-        <div className="scrollable-box">
-          {logs.map((log, index) => (
-            <div key={index}>{log}</div>
-          ))}
-          <div ref={logsEndRef} />
+      {/* Side-by-side Producer and Kafka Logs */}
+      <div className="logs-grid">
+        {/* Producer Logs */}
+        <div className="log-container">
+          <h2>
+            <i className="fas fa-terminal"></i>
+            Producer Logs
+          </h2>
+          <div 
+            className="scrollable-box" 
+            ref={scrollableProducerRef}
+          >
+            {logs.length > 0 ? (
+              logs.map((log, index) => {
+                const isNew = newLogIndexes[index];
+                const riskClass = getRiskLevel(log);
+                
+                return (
+                  <div 
+                    key={index}
+                    className={`log-entry ${riskClass} ${isNew ? 'new-log shimmer-bg' : ''}`}
+                  >
+                    <span className={isNew ? 'pulse-text' : ''}>
+                      {log}
+                    </span>
+                  </div>
+                );
+              })
+            ) : (
+              <div style={{ color: '#8b949e', textAlign: 'center', padding: '2rem' }}>
+                No logs available yet
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Kafka Messages */}
+        <div className="log-container animated-border">
+          <h2>
+            <i className="fas fa-exchange-alt"></i>
+            Kafka Messages
+          </h2>
+          <div 
+            className="scrollable-box" 
+            ref={scrollableKafkaRef}
+          >
+            {kafkaLogs.length > 0 ? (
+              kafkaLogs.map((log, index) => {
+                const parsedData = JSON.parse(log);
+                const isNew = newKafkaLogIndexes[index];
+                
+                return (
+                  <pre 
+                    key={index} 
+                    className={`json-box ${isNew ? 'shimmer-bg' : ''}`}
+                  >
+                    {Object.entries(parsedData).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="json-key">"{key}"</span>: 
+                        <span className={`json-value ${isNew && key === 'risk_score' ? 'pulse-text' : ''}`}>
+                          "{value}"
+                        </span>
+                      </div>
+                    ))}
+                  </pre>
+                );
+              })
+            ) : (
+              <div style={{ color: '#8b949e', textAlign: 'center', padding: '2rem' }}>
+                No Kafka messages available yet
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Only show after prediction completes */}
-      {predictionComplete && (
-        <>
-          <div className="category-container">
-            <h2>High-Risk Activity Categories</h2>
+      {/* Risk Score Chart with Zoom Controls */}
+      <div className="chart-container">
+        <div className="chart-header">
+          <h3 className="chart-title">
+            <i className="fas fa-chart-line"></i>
+            Risk Score Timeline
+          </h3>
+        </div>
+        
+        {riskScores.length > 0 ? (
+          <>
+            <ResponsiveContainer width="100%" height={400}>
+              <LineChart 
+                data={riskScores.map(item => ({
+                  ...item,
+                  formattedTime: formatTimestamp(item.timestamp)
+                }))}
+                margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#30363d" />
+                <XAxis 
+                  dataKey="formattedTime" 
+                  tick={{ fontSize: 12, fill: "#8b949e" }}
+                  stroke="#30363d"
+                />
+                <YAxis 
+                  domain={chartDomain} 
+                  tick={{ fontSize: 12, fill: "#8b949e" }}
+                  stroke="#30363d"
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#161b22',
+                    border: '1px solid #30363d',
+                    borderRadius: '6px',
+                    color: '#e6edf3'
+                  }}
+                />
+                <Legend
+                  verticalAlign="top"
+                  height={36}
+                  wrapperStyle={{ paddingBottom: '10px', color: '#8b949e' }}
+                />
+                <ReferenceLine y={95} stroke="#fa4549" strokeDasharray="3 3" label={{ 
+                  value: 'High Risk (95)', 
+                  position: 'right', 
+                  fill: '#fa4549',
+                  fontSize: 12
+                }} />
+                <ReferenceLine y={75} stroke="#f97e23" strokeDasharray="3 3" label={{ 
+                  value: 'Medium Risk (75)', 
+                  position: 'right', 
+                  fill: '#f97e23',
+                  fontSize: 12
+                }} />
+                <Line 
+                  type="monotone" 
+                  dataKey="risk_score" 
+                  name="Risk Score" 
+                  stroke="#2188ff" 
+                  strokeWidth={2}
+                  dot={{ stroke: '#2188ff', strokeWidth: 2, r: 4, fill: '#161b22' }}
+                  activeDot={{ stroke: '#2188ff', strokeWidth: 2, r: 6, fill: '#161b22' }}
+                />
+                <Brush 
+                  dataKey="formattedTime" 
+                  height={30} 
+                  stroke="#2188ff" 
+                  fill="#161b22"
+                  onChange={handleBrushChange}
+                  tickFormatter={() => ''}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+            
+            {/* Zoom controls */}
+            <div className="chart-controls">
+              <button 
+                className={`chart-control-btn ${chartZoomLevel === 'all' ? 'active' : ''}`}
+                onClick={() => handleZoomChange('all')}
+              >
+                All Scores
+              </button>
+              <button 
+                className={`chart-control-btn ${chartZoomLevel === 'high' ? 'active' : ''}`}
+                onClick={() => handleZoomChange('high')}
+              >
+                High Risk (50-100)
+              </button>
+              <button 
+                className={`chart-control-btn ${chartZoomLevel === 'medium' ? 'active' : ''}`}
+                onClick={() => handleZoomChange('medium')}
+              >
+                Medium+ (25-100)
+              </button>
+              <button 
+                className={`chart-control-btn ${chartZoomLevel === 'low' ? 'active' : ''}`}
+                onClick={() => handleZoomChange('low')}
+              >
+                Low Risk (0-50)
+              </button>
+            </div>
+          </>
+        ) : (
+          <div style={{ height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e' }}>
+            <span>No risk score data available yet</span>
+          </div>
+        )}
+      </div>
+
+      {/* High-Risk Categories - Only show after prediction */}
+      {predictionComplete && Object.keys(highRiskActivities).length > 0 && (
+        <div className="log-container animated-border">
+          <h2>
+            <i className="fas fa-exclamation-triangle"></i>
+            High-Risk Activity Categories
+          </h2>
+          <div className="category-buttons">
             {Object.keys(highRiskActivities).map((category) => (
-              <button key={category} onClick={() => setSelectedCategory(category)} className="category-button">
-                {category === "http" ? "HTTP Related Issues" : "Email Related Issues"} ({highRiskActivities[category]?.length})
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category === selectedCategory ? null : category)}
+                className={`category-button ${category === selectedCategory ? 'active' : ''}`}
+              >
+                <i className={`fas fa-${category === "http" ? "globe" : "envelope"}`}></i>
+                {category === "http" ? "HTTP Related Issues" : "Email Related Issues"}
+                <span className="category-count">{highRiskActivities[category]?.length}</span>
               </button>
             ))}
           </div>
 
           {/* Show activities when category is clicked */}
           {selectedCategory && (
-            <div className="log-container">
-              <h2>{selectedCategory === "http" ? "HTTP Related Issues" : "Email Related Issues"}</h2>
-              <div className="scrollable-box">
-                {highRiskActivities[selectedCategory]?.map((item, index) => (
-                  <div key={index} className="activity-item">
-                    <span className="activity-label">{item.activity}</span> → <span className="risk-score">{item.risk}</span>
-                  </div>
-                ))}
+            <div className="scrollable-box" style={{ marginTop: '1rem' }}>
+              {highRiskActivities[selectedCategory]?.map((item, index) => (
+                <div key={index} className="activity-item shimmer-bg">
+                  <span className="activity-label">{item.activity}</span>
+                  <span className="risk-score">{item.risk}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Email Analysis Section */}
+      {(processingStatus || emailsData.length > 0) && (
+        <>
+          <hr className="section-divider" />
+          <h1>Email Anomaly Analysis</h1>
+          
+          {/* Real-time processing status */}
+          {processingStatus && (
+            <div className="status">
+              <i className="fas fa-spinner fa-spin"></i>
+              {processingStatus}
+            </div>
+          )}
+
+          {/* Display analyzed emails with circular scores */}
+          {emailsData.length > 0 && (
+            <div className="email-results">
+              <div className="email-cards">
+                {emailsData.map((email, index) => {
+                  // Normalize scores for visualization
+                  const normalizedAnomalyScore = Math.min(Math.max(email.anomaly_score, 0), 1);
+                  const percentAnomalyScore = (normalizedAnomalyScore * 100).toFixed(0);
+                  
+                  return (
+                    <div key={index} className="email-card">
+                      <h3>
+                        <i className="fas fa-envelope"></i>
+                        Email {index + 1}
+                      </h3>
+                      
+                      {/* Email content with highlighting */}
+                      <div className="email-text" dangerouslySetInnerHTML={{ __html: email.email_text }} />
+                      
+                      {/* Circular Score Indicators */}
+                      <div className="scores-container">
+                        {/* Anomaly Score Circle */}
+                        <div className="circle-score">
+                          <div className="circle-wrapper">
+                            <div className="circle-bg"></div>
+                            <div 
+                              className="circle-fill" 
+                              style={{ 
+                                '--score-percent': `${percentAnomalyScore}%`,
+                                '--score-color': getScoreColor(normalizedAnomalyScore)
+                              }}
+                            ></div>
+                            <div 
+                              className="circle-inner"
+                              style={{ '--score-color': getScoreColor(normalizedAnomalyScore) }}
+                            >
+                              {percentAnomalyScore}
+                            </div>
+                          </div>
+                          <div className="circle-label">Anomaly Score</div>
+                        </div>
+                        
+                        {/* Similarity Score (use highest similarity) */}
+                        {email.similar_emails && email.similar_emails.length > 0 && (
+                          <div className="circle-score">
+                            <div className="circle-wrapper">
+                              <div className="circle-bg"></div>
+                              <div 
+                                className="circle-fill" 
+                                style={{ 
+                                  '--score-percent': `${(email.similar_emails[0].similarity_score * 100).toFixed(0)}%`,
+                                  '--score-color': '#2188ff'
+                                }}
+                              ></div>
+                              <div 
+                                className="circle-inner"
+                                style={{ '--score-color': '#2188ff' }}
+                              >
+                                {(email.similar_emails[0].similarity_score * 100).toFixed(0)}
+                              </div>
+                            </div>
+                            <div className="circle-label">Similarity</div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Reconstruction Error with Threshold Visualization */}
+                      <div style={{ margin: '2rem 0 1rem', textAlign: 'center' }}>
+                        <div style={{ color: '#e6edf3', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+                          Reconstruction Error: {email.reconstruction_error.toFixed(4)}
+                        </div>
+                        
+                        <div className="threshold-indicator">
+                          <div className="threshold-fill" style={{ width: '100%' }}></div>
+                          
+                          {/* 95th Percentile Threshold Marker */}
+                          <div 
+                            className="threshold-marker" 
+                            style={{ left: `${RECONSTRUCTION_THRESHOLD * 100 / (RECONSTRUCTION_THRESHOLD * 3)}%` }}
+                          ></div>
+                          <div 
+                            className="threshold-value" 
+                            style={{ left: `${RECONSTRUCTION_THRESHOLD * 100 / (RECONSTRUCTION_THRESHOLD * 3)}%` }}
+                          >
+                            Threshold: {RECONSTRUCTION_THRESHOLD}
+                          </div>
+                          
+                          {/* Current Email Error Marker */}
+                          <div 
+                            className="error-marker" 
+                            style={{ 
+                              left: `${Math.min(email.reconstruction_error * 100 / (RECONSTRUCTION_THRESHOLD * 3), 100)}%`,
+                              '--marker-color': getErrorColor(email.reconstruction_error)
+                            }}
+                          ></div>
+                          <div 
+                            className="error-value" 
+                            style={{ 
+                              left: `${Math.min(email.reconstruction_error * 100 / (RECONSTRUCTION_THRESHOLD * 3), 100)}%`,
+                              '--marker-color': getErrorColor(email.reconstruction_error)
+                            }}
+                          >
+                            {email.reconstruction_error.toFixed(4)}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Similar Emails Section */}
+                      {email.similar_emails && email.similar_emails.length > 0 && (
+                        <div className="similar-emails">
+                          <h4>
+                            <i className="fas fa-link"></i> Similar Emails
+                          </h4>
+                          {email.similar_emails.map((simEmail, i) => (
+                            <div key={i} className="similar-email-item">
+                              <div className="similar-email-header">
+                                <span className="similarity-rank">Rank {simEmail.rank}</span>
+                                <span className="similarity-score">{(simEmail.similarity_score * 100).toFixed(2)}%</span>
+                              </div>
+                              <div className="similar-email-body">{simEmail.email}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
         </>
       )}
-
-      <div className="log-container">
-        <h2>Kafka Messages</h2>
-        <div className="scrollable-box">
-          {kafkaLogs.map((log, index) => {
-            const parsedData = JSON.parse(log); // Parse JSON string back to object
-
-            return (
-              <pre key={index} className="json-box">
-                {Object.entries(parsedData).map(([key, value]) => (
-                  <div key={key}>
-                    <span className="json-key">"{key}"</span>: <span className="json-value">"{value}"</span>
-                  </div>
-                ))}
-              </pre>
-            );
-          })}
-          <div ref={kafkaLogsEndRef} />
-        </div>
-      </div>
-
-      <div className="log-container">
-        <h2>Risk Score Chart</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={riskScores}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="timestamp" tick={{ fontSize: 12 }} />
-            <YAxis domain={[0, "auto"]} />
-            <Tooltip />
-            <Line type="monotone" dataKey="risk_score" stroke="#8884d8" strokeWidth={2} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      <h1>Email Anomaly Detection Dashboard</h1>
-
       
-      {/* Real-time processing status */}
-      {processingStatus && <h3 className="status">{processingStatus}</h3>}
-
-      {/* Display analyzed emails */}
-      {emailsData.length > 0 && (
-        <div className="email-results">
-          <h2>Processed Emails</h2>
-          {emailsData.map((email, index) => (
-            <div key={index} className="email-card">
-              <h3>Email {index + 1}</h3>
-              <p dangerouslySetInnerHTML={{ __html: email.email_text }} /> {/* Highlighted Email */}
-              <p><strong>Reconstruction Error:</strong> {email.reconstruction_error.toFixed(4)}</p>
-              <p><strong>Anomaly Score:</strong> {email.anomaly_score.toFixed(4)}</p>
-              
-              {/* Display similar emails */}
-              <h4>Similar Emails:</h4>
-              <ul>
-                {email.similar_emails.map((simEmail, i) => (
-                  <li key={i}>
-                    <strong>Rank {simEmail.rank}</strong> | Similarity: {simEmail.similarity_score.toFixed(4)}
-                    <p>{simEmail.email}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Add Font Awesome for icons */}
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     </div>
-   
-
-   
-
-
   );
 }
-
-
 
 export default Realtime;
