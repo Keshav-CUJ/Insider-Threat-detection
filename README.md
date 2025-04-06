@@ -121,6 +121,8 @@ If not, manually visit the link.
 
 ## 🎥 Video Tutorial
 
-[![Watch the video](pictures/flat,1000x1000,075,f.u1.jpg)](https://youtu.be/0EE-MvzcNZk)
+<a href="https://youtu.be/0EE-MvzcNZk" target="_blank">
+  <img src="pictures/flat,1000x1000,075,f.u1.jpg" alt="Watch the video" width="400"/>
+</a>
 
 ---
