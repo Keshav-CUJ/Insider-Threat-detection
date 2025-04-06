@@ -41,44 +41,40 @@ Setup instructions available at the Frontend repo:
 
 ---
 
-## 🖼️ Dashboard Screenshots
+## 🖼️ Dashboard Screenshots (Click on image for full view)
+
 
 ### 🏠 Landing Page
+
 <p align="center">
-  <img src="images/img1.jpg" width="200" />
-  <img src="images/img2.jpg" width="200" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/11.png" width="400" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/12.png" width="400" />
 </p>
 <p align="center">
-  <img src="images/img3.jpg" width="200" />
-  <img src="images/img4.jpg" width="200" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/13.png" width="400" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/14.png" width="400" />
 </p>
 
-### ⏰ Realtime Detection Dashboard
+### 🕒 Realtime Detection Dashboard
+
 <p align="center">
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/11.png" width="200" />
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/12.png" width="200" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r1.png" width="400" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r2.png" width="400" />
 </p>
 <p align="center">
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/13.png" width="200" />
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/14.png" width="200" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r3.png" width="400" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r4.png" width="400" />
 </p>
 
 ### 🕒 Daily Basis Detection Dashboard
+
 <p align="center">
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r1.png" width="200" />
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r2.png" width="200" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d1.png" width="400" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d2.png" width="400" />
 </p>
 <p align="center">
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r3.png" width="200" />
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r4.png" width="200" />
-</p>
-<p align="center">
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d1.png" width="200" />
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d2.png" width="200" />
-</p>
-<p align="center">
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d3.png" width="200" />
-  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d4.png" width="200" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d3.png" width="400" />
+  <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d4.png" width="400" />
 </p>
 
 ---
