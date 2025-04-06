@@ -8,7 +8,7 @@ from socketio_instance import socketio # Import the existing SocketIO instance f
 # Configure Logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-KAFKA_BROKER = "localhost:9092"
+KAFKA_BROKER = "192.168.1.11:9092"
 KAFKA_TOPIC = "anomaly-scores"
 
 def consume_kafka_messages():

@@ -18,7 +18,7 @@ MODEL_PATH = r"models\best_lstm_autoencoder2.h5"
 model = tf.keras.models.load_model(MODEL_PATH)
 
 # Kafka Configuration
-KAFKA_BROKER = "localhost:9092"  # Change if needed
+KAFKA_BROKER = "192.168.1.11:9092"  # Change if needed
 KAFKA_TOPIC = "anomaly-scores"
 
 producer = KafkaProducer(
