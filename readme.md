@@ -1,4 +1,4 @@
-# 👀 Welcome to Insider Threat Detection World
+#  Welcome to Insider Threat Detection World
 
 Insider threats are among the most challenging cybersecurity risks. These threats arise when individuals within an organization—such as employees, contractors, or partners—intentionally or unintentionally compromise sensitive data. Common examples include:
 - Leaking data through emails
@@ -117,3 +117,4 @@ Setup instructions available at the Frontend repo:
 ---
 
 ✨ Thank you for exploring this project!
+
