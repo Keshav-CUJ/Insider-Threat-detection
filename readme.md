@@ -6,19 +6,20 @@ Insider threats are among the most challenging cybersecurity risks. These threat
 - Sabotaging critical systems
 
 ---
+## Demo Video: https://youtu.be/Fq8ZrXTRPro 
 
-## 🔍 About the Project
+##  About the Project
 
 This project provides a full-fledged AI model for detecting insider threats based on user activity logs, email content, web browsing history, and more.
 
-- 📃 **Dataset:** [CERT Dataset v4.2](https://kilthub.cmu.edu/articles/dataset/Insider_Threat_Test_Dataset/12841247/1)
-- 👨‍💻 **Model:** Built using an **LSTM Autoencoder** that generates risk scores.
-- 📁 The `model` folder contains the trained model.
-- 🗂️ Additional folders contain datasets and preprocessing/feature extraction files.
+-  **Dataset:** [CERT Dataset v4.2](https://kilthub.cmu.edu/articles/dataset/Insider_Threat_Test_Dataset/12841247/1)
+-  **Model:** Built using an **LSTM Autoencoder** that generates risk scores.
+-  The `model` folder contains the trained model.
+-  Additional folders contain datasets and preprocessing/feature extraction files.
 
 ---
 
-## 🖥️ Run Locally and Setup Guide:
+##  Run Locally and Setup Guide:
 
 Setup instructions available at the Frontend repo:
 
@@ -26,25 +27,25 @@ Setup instructions available at the Frontend repo:
 
 ---
 
-## 👀 Explore the Interactive Dashboard:
+##  Explore the Interactive Dashboard:
 
-### 🎥 Full Introduction  
+###  Full Introduction  
 **Click the image below to watch the video walkthrough**
 
 [![Watch the video](./preprocessing%20and%20feature%20extraction/performance%20metrices/1.png)](https://youtu.be/Fq8ZrXTRPro)
 
-### 📂 Related Repositories:
+###  Related Repositories:
 
-- 🚀 **Realtime Backend:** [Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/RealtimeBackend)
-- 🌐 **Daily Basis Backend:** [Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/DailyBasisBackend)
-- 🔔 **Frontend:** [Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/Real%2BDailyFrontend)
+-  **Realtime Backend:** [Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/RealtimeBackend)
+-  **Daily Basis Backend:** [Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/DailyBasisBackend)
+-  **Frontend:** [Repo](https://github.com/Keshav-CUJ/Insider-Threat-detection/tree/Real%2BDailyFrontend)
 
 ---
 
-## 🖼️ Dashboard Screenshots (Click on image for full view)
+##  Dashboard Screenshots (Click on image for full view)
 
 
-### 🏠 Landing Page
+###  Landing Page
 
 <p align="center">
   <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/11.png" width="400" />
@@ -55,7 +56,7 @@ Setup instructions available at the Frontend repo:
   <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/14.png" width="400" />
 </p>
 
-### 🕒 Realtime Detection Dashboard
+###  Realtime Detection Dashboard
 
 <p align="center">
   <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r1.png" width="400" />
@@ -66,7 +67,7 @@ Setup instructions available at the Frontend repo:
   <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/r4.png" width="400" />
 </p>
 
-### 🕒 Daily Basis Detection Dashboard
+###  Daily Basis Detection Dashboard
 
 <p align="center">
   <img src="./preprocessing%20and%20feature%20extraction/performance%20metrices/d1.png" width="400" />
@@ -79,26 +80,26 @@ Setup instructions available at the Frontend repo:
 
 ---
 
-## 🔎 Know More About My Work
+##  Know More About My Work
 
-### 📊 Proposed Solution
+###  Proposed Solution
 ![Technical Approach](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20103035.png)
 
-### 📈 Model Architecture
+###  Model Architecture
 ![Model Architecture](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20103055.png)
 
-### 🧠 Feature Highlights
+###  Feature Highlights
 ![Features](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20103123.png)
 
-### 📉 User Activity Graph
+###  User Activity Graph
 ![Activity Graph](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20104203.png)
 
-### 🤝 Insider Network Graph
+###  Insider Network Graph
 ![Insider Network](./preprocessing%20and%20feature%20extraction/performance%20metrices/Screenshot%202025-03-22%20104209.png)
 
 ---
 
-## 🎯 Performance Metrics
+##  Performance Metrics
 
 - **Accuracy:** `92%`
 
